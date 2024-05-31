@@ -1,8 +1,8 @@
 class Diesel < Formula
   desc "Command-line tool for Rust ORM Diesel"
   homepage "https://diesel.rs"
-  url "https://github.com/diesel-rs/diesel/archive/refs/tags/v2.1.6.tar.gz"
-  sha256 "60775915f615d41b65f31861ed01e467961677b7e430c6cc58d22c0b9bc17baf"
+  url "https://github.com/diesel-rs/diesel/archive/refs/tags/v2.2.0.tar.gz"
+  sha256 "d978c5a29177b803e7170f988e228e3c520306f8f905496b1be3d59dfc181ac5"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/diesel-rs/diesel.git", branch: "master"
 
@@ -16,14 +16,19 @@ class Diesel < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "ebb91ee005288c425def9da870ff6c51de494e1417d0ad52d486e2297a44c5c1"
   end
 
+  depends_on "pkg-config" => :build # db binding generation
   depends_on "rust" => [:build, :test]
   depends_on "libpq"
   depends_on "mysql-client"
 
+  uses_from_macos "llvm" => :build # for libclang
   uses_from_macos "sqlite"
 
   def install
-    system "cargo", "install", *std_cargo_args(path: "diesel_cli")
+    # generate db bindings during build time to avoid version mismatch
+    # see discussions in https://github.com/diesel-rs/diesel/issues/4056
+    cargo_features = "mysqlclient-sys/buildtime_bindgen,pq-sys/buildtime_bindgen"
+    system "cargo", "install", "--features", *cargo_features, *std_cargo_args(path: "diesel_cli")
     generate_completions_from_executable(bin/"diesel", "completions")
   end
 
