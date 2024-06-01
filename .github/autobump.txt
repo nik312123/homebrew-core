@@ -2360,6 +2360,7 @@ uv
 uvicorn
 uwsgi
 v2ray
+v8
 vala
 valabind
 vale

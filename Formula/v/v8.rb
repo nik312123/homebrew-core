@@ -2,8 +2,8 @@ class V8 < Formula
   desc "Google's JavaScript engine"
   homepage "https://v8.dev/docs"
   # Track V8 version from Chrome stable: https://chromiumdash.appspot.com/releases?platform=Mac
-  url "https://github.com/v8/v8/archive/refs/tags/12.1.285.24.tar.gz"
-  sha256 "30942df4ec837b212b697895b9453459b2cdce118eed2e07656dcefea465da72"
+  url "https://github.com/v8/v8/archive/refs/tags/12.5.227.13.tar.gz"
+  sha256 "cbf56ad0dc8134df1a57d3b95d1cbcb28b04658c00ed48ba598bf38ddbee0341"
   license "BSD-3-Clause"
 
   livecheck do
@@ -51,10 +51,10 @@ class V8 < Formula
   fails_with gcc: "5"
 
   # Look up the correct resource revisions in the DEP file of the specific releases tag
-  # e.g. for CIPD dependency gn: https://chromium.googlesource.com/v8/v8.git/+/refs/tags/<version>/DEPS#74
+  # e.g. for CIPD dependency gn: https://chromium.googlesource.com/v8/v8.git/+/refs/tags/<version>/DEPS#76
   resource "gn" do
     url "https://gn.googlesource.com/gn.git",
-        revision: "7367b0df0a0aa25440303998d54045bda73935a5"
+        revision: "d823fd85da3fb83146f734377da454473b93a2b2"
   end
 
   resource "v8/base/trace_event/common" do
@@ -64,18 +64,16 @@ class V8 < Formula
 
   resource "v8/build" do
     url "https://chromium.googlesource.com/chromium/src/build.git",
-        revision: "9b8bc79c291c01ddcdb0383ace9316e3dcccce2f"
+        revision: "5fb1330b84e1ee6d5bda9bd11602087defc32cd9"
 
     # Use Arch Linux Chromium package patch to remove some LLVM/Clang 18 flags
-    patch :p2 do
-      url "https://gitlab.archlinux.org/archlinux/packaging/packages/chromium/-/raw/46f81f58f555dc99f5f789167c64950e88c38e63/drop-flags-unsupported-by-clang16.patch"
-      sha256 "8d1cdf3ddd8ff98f302c90c13953f39cd804b3479b13b69b8ef138ac57c83556"
-    end
+    # patch ref, https://gitlab.archlinux.org/archlinux/packaging/packages/chromium/-/raw/46f81f58f555dc99f5f789167c64950e88c38e63/drop-flags-unsupported-by-clang16.patch
+    patch :DATA
   end
 
   resource "v8/third_party/googletest/src" do
     url "https://chromium.googlesource.com/external/github.com/google/googletest.git",
-        revision: "af29db7ec28d6df1c7f0f745186884091e602e07"
+        revision: "b1a777f31913f8a047f43b2a5f823e736e7f5082"
   end
 
   resource "v8/third_party/icu" do
@@ -85,22 +83,22 @@ class V8 < Formula
 
   resource "v8/third_party/jinja2" do
     url "https://chromium.googlesource.com/chromium/src/third_party/jinja2.git",
-        revision: "515dd10de9bf63040045902a4a310d2ba25213a0"
+        revision: "c9c77525ea20c871a1d4658f8d312b51266d4bad"
   end
 
   resource "v8/third_party/markupsafe" do
     url "https://chromium.googlesource.com/chromium/src/third_party/markupsafe.git",
-        revision: "006709ba3ed87660a17bd4548c45663628f5ed85"
+        revision: "e582d7f0edb9d67499b0f5abd6ae5550e91da7f2"
   end
 
   resource "v8/third_party/zlib" do
     url "https://chromium.googlesource.com/chromium/src/third_party/zlib.git",
-        revision: "dd5fc1316c9bfe87091c4f418e427633590a84a4"
+        revision: "7d77fb7fd66d8a5640618ad32c71fdeb7d3e02df"
   end
 
   resource "v8/third_party/abseil-cpp" do
     url "https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp.git",
-        revision: "0764ad493e54a79c7e3e02fc3412ef55b4835b9e"
+        revision: "a64dd87cec79c80c88190265cfea0cbd4027677f"
   end
 
   def install
@@ -208,3 +206,56 @@ class V8 < Formula
                     "-lv8", "-lv8_libplatform"
   end
 end
+
+__END__
+diff --git a/config/compiler/BUILD.gn b/config/compiler/BUILD.gn
+index de1cd6efc..d766c1c79 100644
+--- a/config/compiler/BUILD.gn
++++ b/config/compiler/BUILD.gn
+@@ -616,24 +616,6 @@ config("compiler") {
+       }
+     }
+ 
+-    # TODO(crbug.com/1488374): This causes binary size growth and potentially
+-    # other problems.
+-    # TODO(crbug.com/1491036): This isn't supported by Cronet's mainline llvm version.
+-    if (default_toolchain != "//build/toolchain/cros:target" &&
+-        !llvm_android_mainline) {
+-      cflags += [
+-        "-mllvm",
+-        "-split-threshold-for-reg-with-hint=0",
+-      ]
+-      if (use_thin_lto && is_a_target_toolchain) {
+-        if (is_win) {
+-          ldflags += [ "-mllvm:-split-threshold-for-reg-with-hint=0" ]
+-        } else {
+-          ldflags += [ "-Wl,-mllvm,-split-threshold-for-reg-with-hint=0" ]
+-        }
+-      }
+-    }
+-
+     # TODO(crbug.com/1235145): Investigate why/if this should be needed.
+     if (is_win) {
+       cflags += [ "/clang:-ffp-contract=off" ]
+@@ -768,7 +750,6 @@ config("compiler") {
+       ldflags += [
+         "/opt:lldltojobs=all",
+         "-mllvm:-import-instr-limit=$import_instr_limit",
+-        "-mllvm:-disable-auto-upgrade-debug-info",
+       ]
+     } else {
+       ldflags += [ "-flto=thin" ]
+@@ -800,13 +781,6 @@ config("compiler") {
+       if (is_apple) {
+         ldflags += [ "-Wcrl,object_path_lto" ]
+       }
+-      if (!is_chromeos) {
+-        # TODO(https://crbug.com/972449): turn on for ChromeOS when that
+-        # toolchain has this flag.
+-        # We only use one version of LLVM within a build so there's no need to
+-        # upgrade debug info, which can be expensive since it runs the verifier.
+-        ldflags += [ "-Wl,-mllvm,-disable-auto-upgrade-debug-info" ]
+-      }
+     }
+ 
+     # TODO(https://crbug.com/1211155): investigate why this isn't effective on
