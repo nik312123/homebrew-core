@@ -1,8 +1,8 @@
 class Cdo < Formula
   desc "Climate Data Operators"
   homepage "https://code.mpimet.mpg.de/projects/cdo"
-  url "https://code.mpimet.mpg.de/attachments/download/29313/cdo-2.4.0.tar.gz"
-  sha256 "a4790fb8cc07f353b11f9bbe49218b8e4be8e5ae56aade8420bad390510b4d2c"
+  url "https://code.mpimet.mpg.de/attachments/download/29421/cdo-2.4.1.tar.gz"
+  sha256 "9144d82b8ab7e73f4cb7a94cc4b884f64dff1a0455c4eb6c93ce4b568007aabf"
   license "GPL-2.0-only"
 
   livecheck do
