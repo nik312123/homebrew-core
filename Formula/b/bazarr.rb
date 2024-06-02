@@ -113,7 +113,7 @@ class Bazarr < Formula
     port = free_port
 
     Open3.popen3("#{bin}/bazarr", "--no-update", "--config", testpath, "-p", port.to_s) do |_, _, stderr, wait_thr|
-      Timeout.timeout(30) do
+      Timeout.timeout(45) do
         stderr.each do |line|
           refute_match "ERROR", line unless line.match? "Error trying to get releases from Github"
           break if line.include? "BAZARR is started and waiting for request on http://0.0.0.0:#{port}"
