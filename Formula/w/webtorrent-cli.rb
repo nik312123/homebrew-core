@@ -3,8 +3,8 @@ require "language/node"
 class WebtorrentCli < Formula
   desc "Command-line streaming torrent client"
   homepage "https://webtorrent.io/"
-  url "https://registry.npmjs.org/webtorrent-cli/-/webtorrent-cli-4.1.0.tgz"
-  sha256 "3b7bac7470e65540e45ed92b8b8d70008bbeca36bf96e81318c15bb9dee8b942"
+  url "https://registry.npmjs.org/webtorrent-cli/-/webtorrent-cli-5.0.1.tgz"
+  sha256 "17e79b1708bacd7bad76237ea719be4af5194f914aed356a7e9bd93d6882e1a4"
   license "MIT"
 
   bottle do
@@ -20,6 +20,8 @@ class WebtorrentCli < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "5b87f6ede3b7fa60052d477c30c12c72f2cf0d2c50223376d05579c5f43e7ee1"
   end
 
+  depends_on "cmake" => :build # for node-datachannel
+  depends_on "ninja" => :build # for node-datachannel
   depends_on "node"
 
   def install
@@ -29,8 +31,12 @@ class WebtorrentCli < Formula
     # Remove incompatible pre-built binaries
     os = OS.kernel_name.downcase
     arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
-    libexec.glob("lib/node_modules/webtorrent-cli/node_modules/{bufferutil,utp-native,utf-8-validate}/prebuilds/*")
+    node_modules = "lib/node_modules/webtorrent-cli/node_modules"
+    libexec.glob("#{node_modules}/{bare-fs,bare-os,bufferutil,fs-native-extensions,utp-native,utf-8-validate}/prebuilds/*")
            .each { |dir| dir.rmtree if dir.basename.to_s != "#{os}-#{arch}" }
+
+    # Remove cmake build files
+    rm_rf libexec/"lib/node_modules/webtorrent-cli/node_modules/node-datachannel/build"
 
     # Replace universal binaries with their native slices
     deuniversalize_machos
