@@ -3,10 +3,9 @@ class AnsibleLint < Formula
 
   desc "Checks ansible playbooks for practices and behaviour"
   homepage "https://ansible-lint.readthedocs.io/"
-  url "https://files.pythonhosted.org/packages/55/8c/297159e5aa870e5511b03f121655704dd44b68285ce05d5d2cd6c118c36b/ansible_lint-24.5.0.tar.gz"
-  sha256 "cf1d9876c63cb26f6677170d4c64b18d8d944b359f8772cba73a2145f8b7a7ac"
+  url "https://files.pythonhosted.org/packages/5e/34/7cf3c0cdbf1cc14698e2f6edd48394497a979c8711f23e1d8dbeaaed1ef2/ansible_lint-24.6.0.tar.gz"
+  sha256 "770dc5ac700bfc778b9effdc6d9bb20bac6c126579c2cbd5e0339fcc041f0af5"
   license all_of: ["MIT", "GPL-3.0-or-later"]
-  revision 1
 
   bottle do
     sha256 cellar: :any,                 arm64_sonoma:   "60b1e6f0e1b2a57ff2715799d246863b801cd5e30643cce106d0e37aeca2a5ee"
@@ -31,8 +30,8 @@ class AnsibleLint < Formula
   end
 
   resource "ansible-core" do
-    url "https://files.pythonhosted.org/packages/6b/1b/6a9e9012b250b9f13680eaabaf9ec5eae51622a1c519a851046d0eac4e3b/ansible_core-2.16.7.tar.gz"
-    sha256 "a8c8f4facba30514571d47abec5c62a5768b86fef3d80d724911c8f20b7b34b7"
+    url "https://files.pythonhosted.org/packages/a7/e5/956a16811044c28663d88740932de9c3fbbe2ec14fabe86a69b3cfe4842b/ansible_core-2.17.0.tar.gz"
+    sha256 "bd16e30ecac405dac594de3e1b1b4d9cc6fa1a9f7a01a6a8d4c471b20660716d"
   end
 
   resource "attrs" do
@@ -171,8 +170,8 @@ class AnsibleLint < Formula
   end
 
   resource "zipp" do
-    url "https://files.pythonhosted.org/packages/4f/a1/ac66fba5917fb7860f91cb251ac6cf838923a8abe89e059cc1988cb256d1/zipp-3.19.1.tar.gz"
-    sha256 "35427f6d5594f4acf82d25541438348c26736fa9b3afa2754bcd63cdb99d8e8f"
+    url "https://files.pythonhosted.org/packages/d3/20/b48f58857d98dcb78f9e30ed2cfe533025e2e9827bbd36ea0a64cc00cbc1/zipp-3.19.2.tar.gz"
+    sha256 "bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19"
   end
 
   def install
