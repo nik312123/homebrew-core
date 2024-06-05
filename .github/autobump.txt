@@ -1089,6 +1089,7 @@ influxdb
 influxdb-cli
 influxdb@1
 inform6
+inframap
 iniparser
 inlyne
 instaloader
